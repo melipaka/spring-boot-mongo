@@ -1,13 +1,18 @@
-FROM openjdk:8-alpine
+# Use a base image with Java runtime
+FROM openjdk:17-jdk-slim as build
 
-# Required for starting application up.
-RUN apk update && apk add /bin/sh
-
+#Create a directory
 RUN mkdir -p /opt/app
-ENV PROJECT_HOME /opt/app
 
-COPY target/spring-boot-mongo-1.0.jar $PROJECT_HOME/spring-boot-mongo.jar
+# Set the working directory
+WORKDIR /opt/app
 
-WORKDIR $PROJECT_HOME
+# Copy the jar file into the container
+COPY target/spring-boot-mongo-1.0.jar myapp.jar /opt/app/spring-boot-mongo.jar
+
+# Expose the port the app runs on
 EXPOSE 8080
-CMD ["java" ,"-jar","./spring-boot-mongo.jar"]
+
+# Run the application
+CMD ["java", "-jar", "/opt/app/spring-boot-mongo.jar"]
+
